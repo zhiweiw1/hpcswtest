@@ -127,9 +127,16 @@ void MpiTest::runTest() {
   int c_i = 0;
   for (auto c_mpi_src: c_mpi_srcs_) {
     cmd_result = compileTest(flog_, getCJobScripts()[c_i], c_mpi_srcs_[c_i], getCName(), getCFlags(), getCSrcName(c_i), getCExeName(c_i), getCLinkLibs());
+/* compileTest() defined in SrcTest class. */
+
     checkCompileResult(cmd_result, getCName(), getCJobScripts()[c_i].getModules()[getCJobScripts()[c_i].getModules().size()-1].first, getCJobScripts()[c_i].getModules()[getCJobScripts()[c_i].getModules().size()-1].second, getCJobScripts()[c_i].getJobName(), flog_, fresult_);
+/* checkCompileResult() is defned in SrcTest class. It print out (alos saved in log and result files) "passed", "failed", or "check" based on the compiling output.  */
+
     script_cmd_result = srcExeTest(flog_, getCJobScripts()[c_i]);
+/*srcExeTest is defined in SrcTest class. it summits the Slurm script and returns the submit results (job ID etc)*/
+
     checkSubmitResult(script_cmd_result, flog_, fresult_);
+/*checkSubmitResult() is defined in helper file. It is not a class. it checks if the script was submitted sucessfully. It does not check the running result*/
     ++c_i;
   }
   c_i = 0;

@@ -47,6 +47,13 @@ check_file_patterns = {"compiler": {
                               "files_exist": [],
                               "check_file_sizes": ["pbs_stderr"]
                              },
+                      "java": {
+                              "file_patterns": {
+                                                "pbs_stdout": ["Hello Java"]
+                                               },
+                              "files_exist": [],
+                              "check_file_sizes": []
+                             },
                       "blas": {
                                "file_patterns": {
                                                  "pbs_stdout": ["SUM C =\s+45"]
@@ -68,6 +75,321 @@ check_file_patterns = {"compiler": {
                                                                   "^End Abaqus/Standard Analysis$",
                                                                   "COMPLETED"
                                                                  ]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "R": {
+# For generic apps, software name must match with the module name, "r" will not work. The software name is taken from the module name
+# For other existing apps, the software names are harded coded in the class constructor, not necessary match the module names, but must math the key here! 
+                                 "file_patterns": {
+                                                   "pbs_stdout": [ "Hello R!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+
+                      "singularity": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["< moo >"] 
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+
+                      "autodock": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": [""]
+                                                  },
+                                 "files_exist": ["test-cases/autodock/1dwd_1dwd.dlg"],
+                                 "check_file_sizes": []
+                                },
+
+                      "bcl2fastq": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["BCL to FASTQ file converter"] 
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "bcl2fastq2": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["BCL to FASTQ file converter"] 
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "fds": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["FDS completed successfully"]  #fds put info into stderr for some reasons
+                                                  },
+                                 "files_exist": ["test-cases/fds/create_remove.out"],
+                                 "check_file_sizes": []
+                                },
+                      "fsl": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": [""]
+                                                  },
+                                 "files_exist": ["test-cases/fsl/t1_seg.nii.gz"],
+                                 "check_file_sizes": []
+                                },
+                      "geos": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["tests summary: ok:2051"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "glpk": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Model has been successfully processed"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "homer": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Finalizing Enrichment Statistics"]
+                                                  },
+                                 "files_exist": ["test-cases/homer/outputfile.txt"],
+                                 "check_file_sizes": []
+                                },
+                      "columbus": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["end of argos"],
+                                                   "test-cases/columbus/argosls": ["driver: overall argos workspace high-water mark =     46415"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "cellranger": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Pipestance completed successfully!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "ls-dyna": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["initialization completed"]
+# the job might be terminated by running time limit, but it will complete the initialization.
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "mathematica": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Mathematica"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "meep": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["finished at"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "miniconda": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Executing transaction: ...working... done"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "namd": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["END OF LOAD BALANCING"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "ncbi-blast": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Gap Penalties"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "openblas": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["test!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "opensees": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["PASSED ALL TESTS","GM/ISE-WE OK"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "orca": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["ORCA TERMINATED NORMALLY"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "parallel": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["C"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "perl": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Hello, World!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "salmon": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": [""]
+                                                  },
+                                 "files_exist": ["test-cases/salmon/salmon_quant/quant.sf"],
+                                 "check_file_sizes": []
+                                },
+                      "samtools": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["TAATTAAGTCTACAGAGCAACTA"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "sbt": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["test-cases/sbt/./test"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "scala3": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Hello, world!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "spaceranger": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Pipestance completed successfully!"]
+                                                  },
+                                 "files_exist": ["test-cases/spaceranger/tiny-bcl/tiny-bcl.mri.tgz"],
+                                 "check_file_sizes": []
+                                },
+                      "subread": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Test finished"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "trimgalore": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["100000 sequences processed in total"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "cmake": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Hello World!"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "gdal": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Band 4 Block=32x1 Type=Byte, ColorInterp=Alpha"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "gmp": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["100 \+ 50 => 150"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "harminv": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["2.554004e-15"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "hdf5": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["HDF5 Done"]
+                                                  },
+                                 "files_exist": ["test-cases/hdf5/dset.h5"],
+                                 "check_file_sizes": []
+                                },
+                      "jpeglib": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": [""]
+                                                  },
+                                 "files_exist": ["test-cases/jpeglib/test.jpg"],
+                                 "check_file_sizes": []
+                                },
+                      "proj": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["3399483.80	752085.60"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "sqlite": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["tt.db r/w"]
+                                                  },
+                                 "files_exist": ["test-cases/sqlite/tt.db"],
+                                 "check_file_sizes": []
+                                },
+                      "squashfs": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Creating 4.0 filesystem on test.sqsh"]
+                                                  },
+                                 "files_exist": ["test-cases/squashfs/test.sqsh"],
+                                 "check_file_sizes": []
+                                },
+                      "tcl": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["hello world"]
+                                                  },
+                                 "files_exist": ["test-cases/squashfs/test.sqsh"],
+                                 "check_file_sizes": []
+                                },
+                      "tiff": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["Planar Configuration","PlanarConfig"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "valgrind": {
+                                 "file_patterns": {
+                                                   "pbs_stderr": ["Invalid write of size 4"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "xalt": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["XALT operation test: successful"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
+                      "yaml-cpp": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["file: yes"]
                                                   },
                                  "files_exist": [],
                                  "check_file_sizes": []
@@ -372,10 +694,15 @@ def find_results_out_files():
 
 def find_name(file_name):
     sw_name = None
-    s = re.search('[a-zA-Z0-9]+_([a-zA-Z0-9]+)_results.out',file_name)
+#    s = re.search('[a-zA-Z0-9]+_([a-zA-Z0-9]+)_results.out',file_name)
+# added - to handle file name with "-" in the middle, like ls-dyna
+    s = re.search('[a-zA-Z0-9]+_([a-zA-Z0-9-]+)_results.out',file_name)
     if s is not None:
-       sw_name = s.groups(0)
-    return s.groups(0)[0]
+       sw_name = s.groups(0)[0]
+    else:
+       print "Error in finding sw_name" 
+#    return s.groups(0)[0]
+    return sw_name
 
 
 def extract_sw_names(results_out_files):
@@ -468,14 +795,20 @@ def get_file_name(file, job_name, job_id):
 
 def check_file_patterns_found(file_pattern_d, dir_name, job_name, job_id):
     for file in file_pattern_d:
+#        print job_name," file pattern ", file
         file_name = get_file_name(file, job_name, job_id)
         file_path = get_file_path(dir_name, file_name)
         try:
             f = open(file_path,"r")
+#            print "file is ", file_path
         except IOError, e:
             print "Error: could not open file", e
             return False
         lines = f.readlines()
+#if empty output file, return true, 
+        if not lines:
+#           print "empty line\n"
+           return True
         for pattern in file_pattern_d[file]:
 #            print "search for pattern.",pattern
             found = False
@@ -524,6 +857,7 @@ def check_files_exist(files_exist_l, dir_name, job_name, job_id):
         file_path = get_file_path(dir_name, file_name)
         if os.path.isfile(file_path):
            files_exist = True
+#           print file_path,"----- file exists"
         else:
            files_exist = False
            break
@@ -563,12 +897,12 @@ def check_run_results_dirnames_jobnames_jobids(sw_name, dir_names, pbs_job_names
                        run_result = check_file_patterns_found_cnt(check_file_patterns[sw_name]["file_patterns"], dir_name, pbs_job_name, pbs_job_id)
                     else:
                        run_result = "passed"
-#                    print "check_file_patterns_found=passed"
+#                       print sw_name, "--check_file_patterns_found=passed"
                     if check_files_size_nonzero(check_file_patterns[sw_name]["check_file_sizes"], dir_name, pbs_job_name, pbs_job_id):
 #                       print "check_files_size_nonzero=check"
                        run_result = "check"
                     if not check_files_exist(check_file_patterns[sw_name]["files_exist"], dir_name, pbs_job_name, pbs_job_id):
-#                       print "check_files_exist=failed"
+#                       print sw_name,"--", check_file_patterns[sw_name]["files_exist"], "---check_files_exist=failed"
                        run_result = "failed"
                  else:
                     run_result = "failed"

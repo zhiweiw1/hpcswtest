@@ -55,7 +55,7 @@ class Python2Test: public AppTest {
     std::string result_file_name_;
     std::ofstream flog_;
     std::ofstream fresult_;
-    std::vector<std::string> python_modules_;
+    std::vector<std::string> python_modules_;  //special for python test
     const static std::vector<std::string> python2_inputs_;
 
 }; // class Python2Test

@@ -1,0 +1,49 @@
+76f6c2a84c5097b13435bbeac4a8acd8  ../small1.00.b.array
+174b4933011d38e29cacd5c81cd2bebd  ../small1.00.b.tab
+*************************************************
+*** SINGLE-END READS NO ERROR              ******
+*************************************************
+
+unmatched= 0 ;   matched= 18785 ;     unmapped= 1213 ;     reads= 19998     ;NN= 0
+accuracy= 1.0  ;    sensitivity= 0.939343934393
+paired_match= 0   ;     paired= 0.0
+*************************************************
+*** SINGLE-END READS NO ERROR NO DUP       ******
+*************************************************
+
+unmatched= 0 ;   matched= 18785 ;     unmapped= 1213 ;     reads= 19998     ;NN= 0
+accuracy= 1.0  ;    sensitivity= 0.939343934393
+paired_match= 0   ;     paired= 0.0
+
+*************************************************
+***  READS WITH NO ERROR                   ******
+*************************************************
+
+unmatched= 56 ;   matched= 38926 ;     unmapped= 1014 ;     reads= 39996     ;NN= 0
+accuracy= 0.998563439536  ;    sensitivity= 0.974647464746
+paired_match= 38926   ;     paired= 1.0
+
+*************************************************
+***  READS NO ERROR, NO DUPLICATED REPORT  ******
+*************************************************
+
+unmatched= 56 ;   matched= 38926 ;     unmapped= 1014 ;     reads= 39996     ;NN= 0
+accuracy= 0.998563439536  ;    sensitivity= 0.974647464746
+paired_match= 38926   ;     paired= 1.0
+
+*************************************************
+***  READS WITH ONLY SEQUENCING ERROR      ******
+*************************************************
+
+unmatched= 66 ;   matched= 33304 ;     unmapped= 6630 ;     reads= 40000     ;NN= 0
+accuracy= 0.998022175607  ;    sensitivity= 0.83425
+paired_match= 28800   ;     paired= 0.864760989671
+
+*************************************************
+***  READS WITH SEQUENCING ERROR AND MUTATION ***
+***  SUBREAD IS RUN WITH LONG INDEL DETECTION ***
+*************************************************
+
+unmatched= 49 ;   matched= 32898 ;     unmapped= 7053 ;     reads= 40002     ;NN= 0
+accuracy= 0.998512762922  ;    sensitivity= 0.823633818309
+paired_match= 28110   ;     paired= 0.854459237644

@@ -59,6 +59,33 @@ class JobScript {
                                                                                                                                                                            host_name_(setHostName()),
                                                                                                                                                                            wall_time_(w_t),
                                                                                                                                                                            modules_(ms) {};
+/*with working directory*/
+    JobScript(int t_n_p, int m_n_p_p_n, std::string m_c_n, std::string m_c_a, std::string w_d, std::string e_n, std::string e_a, std::string j_s_n, std::string j_n, std::string q_n, std::string w_t, modules::modules_type ms): total_num_procs_(t_n_p),
+
+                               max_num_procs_per_node_(m_n_p_p_n),
+
+                               mpi_cmd_name_(m_c_n),
+
+                               mpi_cmd_args_(m_c_a),
+
+			       working_dir_(w_d),
+
+                               exe_name_(e_n),
+
+                               exe_args_(e_a),
+
+                               job_script_name_(j_s_n),
+
+                               job_name_(j_n),
+
+                               queue_name_(q_n),
+
+                               host_name_(setHostName()),
+
+                               wall_time_(w_t),
+
+                               modules_(ms) {};
+
 
     JobScript(const JobScript &);
     virtual ~JobScript() {};
@@ -71,6 +98,8 @@ class JobScript {
     std::string getHostName(void) const;
     std::string getMpiCmdName(void) const;
     std::string getMpiCmdArgs(void) const;
+    std::string getWorkingDir(void) const;
+
     std::string getExeName(void) const;
     std::string getExeArgs(void) const;
     std::string getJobScriptName(void) const;
@@ -90,6 +119,7 @@ class JobScript {
     std::string wall_time_;
     std::string mpi_cmd_name_;
     std::string mpi_cmd_args_;
+    std::string working_dir_;
     std::string exe_name_;
     std::string exe_args_;
     modules::modules_type modules_;

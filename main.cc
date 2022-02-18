@@ -31,6 +31,13 @@ Author: Cormac Garvey
 
 
 int main() {
+  system("rm -rf test-cases/");
+  system("rm -rf *.o*");
+  system("rm -rf *.e*");
+  system("rm -rf *.out");
+  system("rm -rf *.log");
+  system("rm -rf *exe*");
+  system("rm -rf *.sbatch");
   boost::filesystem::path cur_dir=boost::filesystem::current_path();
 //  boost::filesystem::path json_def_file_path("/hpc-common/software/hpcswtest/bin/hpcswtest.json_def");
   std::string json_file_str("hpcswtest.json");
@@ -53,11 +60,17 @@ int main() {
   boost::filesystem::path json_file_path(json_file_path_str);
   
   if (boost::filesystem::exists(json_file_path)) {
-//    std::cout << json_file_path_str << " exists, lets use it" << std::endl;
+    std::cout << json_file_path_str << " exists, lets use it" << std::endl;
   } else {
     json_file_path_str = json_def_file_path.string();
-//    std::cout << json_file_path << " does not exist, so lets use " << json_file_path_str << std::endl;
+    std::cout << json_file_path << " does not exist, so lets use " << json_file_path_str << std::endl;
   }
+  char cp_command[100];
+  sprintf(cp_command, "cp -r %s/test-cases .", hpcswtest_base_dir_env);
+  std::cout <<" cp command " << cp_command << std::endl;
+  std::cout <<" base is  " << hpcswtest_base_dir << std::endl;
+  system(cp_command);
+  //exit(0);
   gethostname(hostname, 1023);
   dateHost << std::ctime(&date_result);
   dateHost << hostname << std::endl;

@@ -48,6 +48,7 @@ namespace hpcswtest {
 std::string exec(const char *);
 bool module_load(std::ofstream &, modules::module_type, std::string &);
 std::string module_name_version(modules::module_type);
+std::string module_name(modules::module_type);
 std::string modules_string(modules::modules_type);
 bool modules_load(std::ofstream &, modules::modules_type, std::string &);
 //std::string getClusterName(void);

@@ -27,7 +27,7 @@ Author: Cormac Garvey
 
 #include "hpcswtest.h"
 #include <iostream>
-
+#include <boost/algorithm/string/replace.hpp>
 
 namespace hpcswtest {
 
@@ -76,7 +76,9 @@ std::string HpcSwTest::getHostName() const {
 
 
 std::string HpcSwTest::getTestName() const {
-  return test_name_;
+//  return test_name_;
+ std::string output = boost::replace_all_copy(test_name_, "/", "-");
+  return output;
 }
 
 

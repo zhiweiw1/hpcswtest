@@ -43,7 +43,7 @@ std::vector<jobscript::JOBSCRIPT> SrcTest::calcCJobScripts(const jobscript::JOBS
 //  std::cout << "Enter CompilerTest::calcCJobScripts" << std::endl;
   for (auto c_e_n: c_exe_names_) {
 #ifdef SLURM
-    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), c_e_n, "", "c_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "c_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
+    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), p_s_o.getWorkingDir(), c_e_n, "", "c_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "c_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
 #else
     jobscript::PbsScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), c_e_n, "", "c_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".pbs", "c_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getCpuType(), p_s_o.getChunkSize(), p_s_o.getWallTime(), p_s_o.getPbsArrangement(), p_s_o.getPbsSharing());
 #endif
@@ -62,7 +62,7 @@ std::vector<jobscript::JOBSCRIPT> SrcTest::calcCppJobScripts(const jobscript::JO
 //  std::cout << "Enter CompilerTest::calcCppJobScripts" << std::endl;
   for (auto cpp_e_n: cpp_exe_names_) {
 #ifdef SLURM
-    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), cpp_e_n, "", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
+    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), p_s_o.getWorkingDir(),cpp_e_n, "", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
 #else
     jobscript::JOBSCRIPT job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), cpp_e_n, "", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".pbs", "cpp_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getCpuType(), p_s_o.getChunkSize(), p_s_o.getWallTime(), p_s_o.getPbsArrangement(), p_s_o.getPbsSharing());
 #endif
@@ -81,7 +81,7 @@ std::vector<jobscript::JOBSCRIPT> SrcTest::calcFJobScripts(const jobscript::JOBS
 //  std::cout << "Enter CompilerTest::calcFJobScripts" << std::endl;
   for (auto f_e_n: f_exe_names_) {
 #ifdef SLURM
-    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), f_e_n, "", "f_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "f_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
+    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(),p_s_o.getWorkingDir(), f_e_n, "", "f_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".sbatch", "f_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getWallTime());
 #else
     jobscript::JOBSCRIPT job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), f_e_n, "", "f_script_" + std::to_string(getTestObjectCount()) + "_" +  std::to_string(ic) + ".pbs", "f_script_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(ic), p_s_o.getQueueName(), p_s_o.getCpuType(), p_s_o.getChunkSize(), p_s_o.getWallTime(), p_s_o.getPbsArrangement(), p_s_o.getPbsSharing());
 #endif
@@ -368,7 +368,9 @@ std::string SrcTest::compileCmd(const modules::modules_type &modules, const std:
   }
 }
 
-
+/**
+* Create the command string for compiling, and execute the string. The result of the compiling is returned 
+*/
 std::string SrcTest::compileTest(std::ofstream &flog, const jobscript::JOBSCRIPT &job_script, const std::string &src, const std::string &compiler_name, const std::string &compiler_flags, const std::string &src_name, const std::string &exe_name, const std::string &link_libs) const {
   std::string module_load_result;
   std::string compile_cmd;
@@ -389,7 +391,9 @@ std::string SrcTest::compileTest(std::ofstream &flog, const jobscript::JOBSCRIPT
   return cmd_result;
 }
 
-
+/**
+*create and execute the submit command and return the submitting result 
+*/
 std::string SrcTest::srcExeTest(std::ofstream &flog, jobscript::JOBSCRIPT &job_script) const {
   std::string script_cmd_result;
   std::string script_cmd;
@@ -406,7 +410,8 @@ std::string SrcTest::srcExeTest(std::ofstream &flog, jobscript::JOBSCRIPT &job_s
   return script_cmd_result;
 }
 
-
+/* Check the compiling result. If no output, "passed:. If sees errors, print "failed". If others, print out "check"
+*/
 void SrcTest::checkCompileResult(const std::string &result, const std::string &compiler_name, const std::string &module_name, const std::string &module_version, const std::string &job_name, std::ofstream &flog, std::ofstream &fresult) const {
   std::regex compile_regex("error|fatal|found|undefined|No such file|cannot find", std::regex_constants::icase);
   if (result.size() == 0) {

@@ -106,9 +106,14 @@ void CompilerTest::runTest(void) {
   if (getCName() != "none") {
   for (auto c_src: c_srcs_) {
     cmd_result = compileTest(flog_, getCJobScripts()[c_i], getCSrc(c_i), getCName(), getCFlags(), getCSrcName(c_i), getCExeName(c_i), getCLinkLibs());
+//CompileTest() defined in srctest.cc
     checkCompileResult(cmd_result, getCName(), findPrimaryModule(getCJobScripts()[c_i].getModules()).first, findPrimaryModule(getCJobScripts()[c_i].getModules()).second, getCJobScripts()[c_i].getJobName(), flog_, fresult_);
+//checkCompileResult() defined in srctest.cc
+
     script_cmd_result = srcExeTest(flog_, getCJobScripts()[c_i]);
+
     checkSubmitResult(script_cmd_result, flog_, fresult_);
+//checkSubmitResult() defined in helper.cc
     ++c_i;
   }
   }

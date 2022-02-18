@@ -51,6 +51,7 @@ Author: Cormac Garvey
 #include "matlabtest.h"
 #include "python2test.h"
 #include "python3test.h"
+#include "generictest.h"
 
 #include <memory>
 
@@ -79,6 +80,7 @@ class Generator {
     void getLibraryNameJsonData(boost::property_tree::ptree::value_type, std::string &);
     void getExtraModJsonData(boost::property_tree::ptree::value_type, int, std::string &, std::string &);
     void getExeExeArgsJsonData(boost::property_tree::ptree::value_type, std::string &, std::string &);
+    void getWorkingDirArgsJsonData(boost::property_tree::ptree::value_type, std::string &);
     void getMpiCmdNameArgsJsonData(boost::property_tree::ptree::value_type, std::string &, std::string &);
     void getHeliosExesJsonData(boost::property_tree::ptree::value_type, std::string &, std::string &, std::string &);
     void getPythonModulesJsonData(boost::property_tree::ptree::value_type, std::vector<std::string> &);

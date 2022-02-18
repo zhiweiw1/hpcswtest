@@ -29,6 +29,7 @@ Author: Cormac Garvey
 #include "apptest.h"
 
 #include <iostream>  // debugging only
+#include <boost/algorithm/string/replace.hpp>
 
 
 namespace hpcswtest {
@@ -154,7 +155,7 @@ std::vector<jobscript::JOBSCRIPT> AppTest::calcJobScripts(const std::string &tes
        exe_args_tmp = calcSubArgs(p_s_o, i_f_n, j_n_local);
     }
 #ifdef SLURM
-    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), e_n, exe_args_tmp, j_n_local + ".sbatch", j_n_local, p_s_o.getQueueName(), p_s_o.getWallTime());
+    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(),p_s_o.getWorkingDir(), e_n, exe_args_tmp, j_n_local + ".sbatch", j_n_local, p_s_o.getQueueName(), p_s_o.getWallTime());
 #else
     exe_args_tmp = exe_args_tmp + " -P hpc";
     if (p_s_o.getCpuType() != "haswell") {
@@ -181,7 +182,7 @@ std::vector<jobscript::JOBSCRIPT> AppTest::calcJobScripts(const std::string &tes
     exe_args_tmp = calcExeArgs(p_s_o, i_f_n, j_n_local);
 //    std::cout << "(calcJobScripts) exe_args_temp = " << exe_args_tmp << std::endl;
 #ifdef SLURM
-    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), p_s_o.getExeName(), exe_args_tmp, j_n_local + ".sbatch", j_n_local, p_s_o.getQueueName(), p_s_o.getWallTime());
+    jobscript::SlurmScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(),p_s_o.getWorkingDir(), p_s_o.getExeName(), exe_args_tmp, j_n_local + ".sbatch", j_n_local, p_s_o.getQueueName(), p_s_o.getWallTime());
 #else
     jobscript::PbsScript job_script(ms_tmp, p_s_o.getTotalNumProcs(), p_s_o.getMaxNumProcsPerNode(), p_s_o.getMpiCmdName(), p_s_o.getMpiCmdArgs(), p_s_o.getExeName(), exe_args_tmp, j_n_local + ".pbs", j_n_local, p_s_o.getQueueName(), p_s_o.getCpuType(), p_s_o.getChunkSize(), p_s_o.getWallTime(), p_s_o.getPbsArrangement(), p_s_o.getPbsSharing());
 #endif
@@ -192,7 +193,11 @@ std::vector<jobscript::JOBSCRIPT> AppTest::calcJobScripts(const std::string &tes
   return p_s_o_tmp;
 }
 
-
+/**
+* i_f_e : input file extension, such as .py or .r. etc.
+* s is the the app name, such as "abaqus"
+* ??? s_a_n is the sub_script name provided in the json file
+*/
 AppTest::AppTest(const std::string &s, const std::string &i_f_e, const jobscript::JOBSCRIPT &p_s, int n_inputs, const std::string &s_a_n): HpcSwTest(s),
                                                                                                                                            job_scripts_(calcJobScripts(s, p_s, s_a_n)),
                                                                                                                                            sub_app_name_(s_a_n),
@@ -216,6 +221,7 @@ std::vector<std::string> AppTest::calcInputNames(const std::string &test_name, i
   std::vector<std::string> input_file_names_tmp;
   for (auto i=0; i<n_inputs; ++i) {
     input_file_names_tmp.push_back(test_name + "_" + std::to_string(getTestObjectCount()) + "_" + std::to_string(i) + input_file_ext);
+/* for eamaple matlab_11_0.m, getTestObjectCount() return the position of app in the json file. matlab is the 11th test object */
   }
   return input_file_names_tmp;
 }
@@ -229,7 +235,7 @@ std::string AppTest::exeAppTest(std::ofstream &flog, std::ofstream &fresult, job
 
   fresult << module_name_version(job_script.getModules()[job_script.getModules().size()-1]) << "\t" << job_name << std::endl;
   std::cout << job_script.getExeName() << " " << job_script.getExeArgs() << std::endl;
-  if (!sub_app_name_ .empty()) {
+  if (!sub_app_name_ .empty()) {  //sub_app_name for running a sub script provided in the json file
     if (modules_load(flog, job_script.getModules(), module_load_result)) {
       modules_str = modules_string(job_script.getModules());
       script_cmd = " { " + modules_str + ";" + job_script.getExeName() + " " + job_script.getExeArgs() + "; }" + " 2>&1";
@@ -238,7 +244,7 @@ std::string AppTest::exeAppTest(std::ofstream &flog, std::ofstream &fresult, job
     } else {
       script_cmd_result = "fatal";
     }
-  } else {
+  } else { //if no sub_script in the json file
     script_cmd_result = subJobScript(flog, job_script);
   }
   return script_cmd_result;
@@ -296,6 +302,7 @@ std::string AppTest::exeAppTest(std::ofstream &flog, std::ofstream &fresult, int
     }
   } else {
       script_cmd_result = subJobScript(flog, job_scripts_[indx]);
+//defined in help, simple submit the job and return the result. in the sub-classes, the return result will be checked by checkSubmitResult() defined in helper
   }
   return script_cmd_result; 
 }
@@ -307,7 +314,10 @@ std::vector<jobscript::JOBSCRIPT> AppTest::getJobScripts(void) const {
 
 
 std::string AppTest::getSubAppName(void) const {
-  return sub_app_name_;
+//  return sub_app_name_;
+  /*Handle '/' in module names*/
+  std::string output = boost::replace_all_copy(sub_app_name_, "/", "-");
+  return output;
 }
 
 

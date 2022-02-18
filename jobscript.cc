@@ -26,7 +26,7 @@ Author: Cormac Garvey
 */
 
 #include "jobscript.h"
-
+#include <boost/algorithm/string/replace.hpp>
 
 namespace jobscript {
 
@@ -41,6 +41,7 @@ JobScript::JobScript(const JobScript & j_s) {
   wall_time_ = j_s.wall_time_;
   mpi_cmd_name_ = j_s.mpi_cmd_name_;
   mpi_cmd_args_ = j_s.mpi_cmd_args_;
+  working_dir_ = j_s.working_dir_;
   exe_name_ = j_s.exe_name_;
   exe_args_ = j_s.exe_args_;
   modules_ = j_s.modules_;
@@ -99,6 +100,9 @@ std::string JobScript::getMpiCmdArgs(void) const {
   return mpi_cmd_args_;
 }
 
+std::string JobScript::getWorkingDir(void) const {
+  return working_dir_;
+}
 
 std::string JobScript::getExeName(void) const {
   return exe_name_;
@@ -111,12 +115,18 @@ std::string JobScript::getExeArgs(void) const {
 
 
 std::string JobScript::getJobScriptName(void) const {
-  return job_script_name_;
+/*Handle '/' in module names*/
+  std::string output = boost::replace_all_copy(job_script_name_, "/", "-");
+  return output;
+//  return job_script_name_;
 }
 
 
 std::string JobScript::getJobName(void) const {
-  return job_name_;
+/*Handle '/' in module names*/
+  std::string output = boost::replace_all_copy(job_name_, "/", "-");
+//  return job_name_;
+  return output;
 }
 
 

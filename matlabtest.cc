@@ -78,6 +78,7 @@ void MatlabTest::runTest() {
   int c_i = 0;
   for (auto matlab_input: matlab_inputs_) {
     createFileFromStr(getInputFileNames()[c_i], matlab_input);
+    std::cout << "matlab file name = " << getInputFileNames()[c_i] << std::endl;
 //    fresult_ << module_name_version(getJobScripts()[c_i].getModules()[getJobScripts()[c_i].getModules().size()-1]) << "\t" << getJobScripts()[c_i].getJobName() << std::endl;
     script_cmd_result = exeAppTest(flog_, fresult_, c_i);
     checkSubmitResult(script_cmd_result, flog_, fresult_);

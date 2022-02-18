@@ -42,17 +42,21 @@ std::string exec(const char* cmd) {
   const int BUFSIZE = 1000;
   char buf[BUFSIZE];
   FILE * f = popen( cmd, "r" );
+/* The popen() function shall execute the command specified by the string command. It shall create a pipe between the calling program and the executed command, and shall return a pointer to a stream that can be used to either read from or write to the pipe.
+*/
 //  std::cout << "(exec) cmd= " << cmd << std::endl;
   if ( f == NULL) {
     std::cerr << "Error: (" << __FILE__ << "," << __LINE__ << ") Could not execute" << std::endl;
     exit(EXIT_FAILURE);
   }
   while( fgets( buf, BUFSIZE,  f ) ) {
+ std::cout << "(exec) buf= " << buf << std::endl;
     result += buf;
   }
   if (result[result.size()-1] == '\n') {
       result.pop_back();
   }
+ std::cout << "(exec) result= " << result << std::endl;
   return result;
 }
 
@@ -123,7 +127,9 @@ bool modules_load(std::ofstream &flog, modules::modules_type modules, std::strin
   }
 }
 
-
+/**
+* for single module load
+*/
 bool module_load(std::ofstream &flog, modules::module_type module, std::string &result ) {
   std::string cmd;
   cmd = "module load " + module.first + "/" + module.second + " 2>&1";
@@ -141,9 +147,12 @@ bool module_load(std::ofstream &flog, modules::module_type module, std::string &
 
 
 std::string module_name_version(modules::module_type m_t) {
-  return m_t.first + "/" + m_t.second;
+    return m_t.first + "/" + m_t.second;
 }
 
+std::string module_name(modules::module_type m_t) {
+    return m_t.first;
+}
 
 void checkSubmitResult(const std::string &result, std::ofstream &flog, std::ofstream &fresult) {
 //  std::cout << result << std::endl;
@@ -159,7 +168,7 @@ void checkSubmitResult(const std::string &result, std::ofstream &flog, std::ofst
   } else {
     flog << "Error: job submitted incorrectly" << std::endl;
     fresult << "Error: job submitted incorrectly" << std::endl;
-    std::cout << "Error: job submitted incorrectly" << std::endl;
+    std::cout << "Error: job submitted incorrectly -- " << result << std::endl;
     flog << result << std::endl;
   }
 }
@@ -191,6 +200,7 @@ std::string subJobScript(std::ofstream &flog, jobscript::JOBSCRIPT &job_script) 
   job_script.generate();
 #ifdef SLURM
   script_cmd = "sbatch " + job_script.getJobScriptName() + " 2>&1";
+std::cout << "submit command: " << script_cmd << std::endl;
 #else
   script_cmd = "qsub -P hpc " + job_script.getJobScriptName() + " 2>&1";
 #endif

@@ -46,7 +46,7 @@ Generator::~Generator(void) {
 void Generator::getCompilerJsonData(boost::property_tree::ptree::value_type pt, std::string &module_name, std::string &module_version, std::string &c_name, std::string &cpp_name, std::string &f_name, std::string &c_flags, std::string &cpp_flags, std::string &f_flags, std::string &c_link_libs, std::string &cpp_link_libs, std::string &f_link_libs) {
   module_name =  pt.second.get<std::string>("module_name");
   module_version =  pt.second.get<std::string>("module_version");
-//  std::cout << "(Generator::Generator)" << pt.second.get<std::string>("module_name") << std::endl;
+  std::cout << "(Generator::Generator)" << pt.second.get<std::string>("module_name") << std::endl;
 //  std::cout << "(Generator::Generator)" << pt.second.get<std::string>("module_version") << std::endl;
   c_name =  pt.second.get<std::string>("c_name");
   cpp_name =  pt.second.get<std::string>("cpp_name");
@@ -98,6 +98,19 @@ void Generator::getExeExeArgsJsonData(boost::property_tree::ptree::value_type pt
   }
   if (exe_args_o) {
     exe_args =  pt.second.get<std::string>("exe_args");
+  }
+//  if (exe_args == "none") {
+//    exe_args = "";
+//  }
+}
+
+/**
+*To obtain hte working directory name if it is specified in the json file
+*/
+void Generator::getWorkingDirArgsJsonData(boost::property_tree::ptree::value_type pt, std::string &working_dir) {
+  boost::optional<boost::property_tree::ptree &> working_dir_o = pt.second.get_child_optional( "working_dir");
+  if (working_dir_o) {
+    working_dir =  pt.second.get<std::string>("working_dir");
   }
 //  if (exe_args == "none") {
 //    exe_args = "";
@@ -221,20 +234,21 @@ void Generator::createTestObjects(void) {
   boost::property_tree::read_json(json_file_name_, pt);
   sc = pt.get_child("system_configuration");
   cluster_name = Generator::getClusterNameJsonData(sc);
-//  std::cout << "(Generator::Generator) cluster_name = " << cluster_name << std::endl;
+  std::cout << "(Generator::Generator) cluster_name = " << cluster_name << std::endl;
 #ifndef SLURM
   pbs_max_chunk_size = Generator::getPbsMaxChunkSizeJsonData(cluster_name, sc);
 //  std::cout << "(Generator::Generator) pbs_max_chunk_size = " << pbs_max_chunk_size << std::endl;
 #endif
 
   for (auto v: pt.get_child(cluster_name)) {
-//    std::cout << "(Generator::Generator) Test key= " << v.first << std::endl;
+    std::cout << "(Generator::Generator) Test key= " << v.first << std::endl;
     for (auto v2: pt.get_child(cluster_name + "." + v.first)) {
       std::string run_script;
       std::string mpi_cmd_name;
       std::string mpi_cmd_args;
       std::string exe_name;
       std::string exe_args;
+      std::string working_dir;
       if (v.first == "compiler") {
         getCompilerJsonData(v2, module_name, module_version, c_name, cpp_name, f_name, c_flags, cpp_flags, f_flags, c_link_libs, cpp_link_libs, f_link_libs);
         modules::modules_type modules;
@@ -242,12 +256,14 @@ void Generator::createTestObjects(void) {
           modules = {{module_name, module_version}};
         }
 #ifdef SLURM
-        jobscript::SlurmScript job_script(modules,1, 1, "", "", "", "", "", "", hpcswtest_queue);
+        jobscript::SlurmScript job_script(modules,1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
         jobscript::PbsScript job_script(modules,1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
 //        std::cout << "(generator) after job_script object generated" << std::endl;
         tests_.push_back(new hpcswtest::CompilerTest(job_script, c_name, cpp_name, f_name, c_flags, cpp_flags, f_flags, c_link_libs, cpp_link_libs, f_link_libs));
+/* tests_ is a vector defined in Generator class */ 
+
 //        std::cout << "(generator) after CompilerTest object generated" << std::endl;
 //        tests_.push_back(std::unique_ptr<hpcswtest::HpcSwTest> (new hpcswtest::CompilerTest(job_script, c_name, cpp_name, f_name, c_flags, cpp_flags, f_flags, c_link_libs, cpp_link_libs, f_link_libs)));
       } else if (v.first == "mcnp") {
@@ -261,14 +277,14 @@ void Generator::createTestObjects(void) {
             getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
             getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args,"", exe_name, exe_args, "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
             tests_.push_back(new hpcswtest::McnpTest(job_script));
           } else {
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -285,14 +301,14 @@ void Generator::createTestObjects(void) {
             getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
             getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
             tests_.push_back(new hpcswtest::McnpxTest(job_script));
           } else {
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -303,7 +319,7 @@ void Generator::createTestObjects(void) {
           getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
           modules::modules_type modules({{module_name, module_version}});
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "","", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -312,7 +328,7 @@ void Generator::createTestObjects(void) {
           getCompilerJsonData(v2, module_name, module_version, c_name, cpp_name, f_name, c_flags, cpp_flags, f_flags, c_link_libs, cpp_link_libs, f_link_libs);
           modules::modules_type modules({{module_name, module_version}});
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -321,7 +337,7 @@ void Generator::createTestObjects(void) {
           getCompilerJsonData(v2, module_name, module_version, c_name, cpp_name, f_name, c_flags, cpp_flags, f_flags, c_link_libs, cpp_link_libs, f_link_libs);
           modules::modules_type modules({{module_name, module_version}});
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -332,7 +348,7 @@ void Generator::createTestObjects(void) {
           modules::modules_type modules({{extra_module_name1,extra_module_version1},{module_name, module_version}});
           getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", exe_name, exe_args, "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -343,7 +359,7 @@ void Generator::createTestObjects(void) {
           modules::modules_type modules({{extra_module_name1,extra_module_version1},{module_name, module_version}});
           getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", exe_name, exe_args, "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -357,14 +373,14 @@ void Generator::createTestObjects(void) {
             getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
             getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 4, 2, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 4, 2, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 4, 2, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size, "0:10:00");
 #endif
             tests_.push_back(new hpcswtest::SerpentTest(job_script));
           } else {
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 4, 2, "", "", "", "", "", "", hpcswtest_queue, "0:10:00");
+            jobscript::SlurmScript job_script(modules, 4, 2, "","", "", "", "", "", "", hpcswtest_queue, "0:10:00");
 #else
             jobscript::PbsScript job_script(modules, 4, 2, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size, "0:10:00");
 #endif
@@ -379,14 +395,14 @@ void Generator::createTestObjects(void) {
             getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
             getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
             tests_.push_back(new hpcswtest::CthTest(job_script));
           } else {
 #ifdef SLURM
-            jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+            jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
             jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -404,7 +420,7 @@ void Generator::createTestObjects(void) {
           getHeliosExesJsonData(v2, aurora_exe_name, helios_exe_name, zenith_exe_name);
           getLibraryNameJsonData(v2, library_name);
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, "0:5:0");
+          jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue, "0:5:0");
 #else
           jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size, "0:5:0");
 #endif
@@ -420,14 +436,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 12, 12, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, "0:10:00");
+             jobscript::SlurmScript job_script(modules, 12, 12, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue, "0:10:00");
 #else
              jobscript::PbsScript job_script(modules, 12, 12, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size, "0:10:00");
 #endif
              tests_.push_back(new hpcswtest::Mc21Test(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 12, 12, "", "", "", "", "", "", hpcswtest_queue, "0:10:00");
+             jobscript::SlurmScript job_script(modules, 12, 12, "","", "", "", "", "", "", hpcswtest_queue, "0:10:00");
 #else
              jobscript::PbsScript job_script(modules, 12, 12, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size, "0:10:00");
 #endif
@@ -443,14 +459,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::VaspTest(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -464,14 +480,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::LammpsTest(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -485,14 +501,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args,"", exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::NwchemTest(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -507,14 +523,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::GaussianTest(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -528,14 +544,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::AbaqusTest(job_script));
         } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -549,14 +565,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::StarccmTest(job_script));
           } else {
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -570,14 +586,14 @@ void Generator::createTestObjects(void) {
              getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
              getExeExeArgsJsonData(v2, exe_name, exe_args);
 #ifdef SLURM
-             jobscript::SlurmScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue);
+             jobscript::SlurmScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, "",exe_name, exe_args, "", "", hpcswtest_queue);
 #else
              jobscript::PbsScript job_script(modules, 1, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
              tests_.push_back(new hpcswtest::MatlabTest(job_script));
           } else {
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -589,7 +605,7 @@ void Generator::createTestObjects(void) {
           modules::modules_type modules({{module_name, module_version}});
           getPythonModulesJsonData(v2, python_modules);
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
@@ -600,14 +616,38 @@ void Generator::createTestObjects(void) {
           modules::modules_type modules({{module_name, module_version}});
           getPythonModulesJsonData(v2, python_modules);
 #ifdef SLURM
-          jobscript::SlurmScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue);
+          jobscript::SlurmScript job_script(modules, 1, 1, "","", "", "", "", "", "", hpcswtest_queue);
 #else
           jobscript::PbsScript job_script(modules, 1, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
 #endif
           tests_.push_back(new hpcswtest::Python3Test(job_script, python_modules, v.first));
       } else {
-          std::cerr << "Error: Do not recognize this test " << v.first << " (" << __FILE__ << "," << __LINE__ << ")" << std::endl;
-          exit(EXIT_FAILURE);
+/* for all generic apps */
+          getModuleNameVersionJsonData(v2, module_name, module_version);
+          modules::modules_type modules({{module_name, module_version}});
+          getRunScriptJsonData(v2, run_script);
+          if (run_script == "none" || run_script.empty()) {
+             getMpiCmdNameArgsJsonData(v2, mpi_cmd_name, mpi_cmd_args);
+             getExeExeArgsJsonData(v2, exe_name, exe_args);
+             getWorkingDirArgsJsonData(v2, working_dir);
+#ifdef SLURM
+/*added working directory here*/
+             jobscript::SlurmScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, working_dir, exe_name, exe_args, "", "", hpcswtest_queue);
+#else
+             jobscript::PbsScript job_script(modules, 2, 1, mpi_cmd_name, mpi_cmd_args, exe_name, exe_args, "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
+#endif
+             tests_.push_back(new hpcswtest::GenericTest(job_script));
+        } else {
+#ifdef SLURM
+             jobscript::SlurmScript job_script(modules, 2, 1, "","", "", "", "", "", "", hpcswtest_queue);
+#else
+             jobscript::PbsScript job_script(modules, 2, 1, "", "", "", "", "", "", hpcswtest_queue, cpu_type, pbs_max_chunk_size);
+#endif
+             tests_.push_back(new hpcswtest::GenericTest(job_script, run_script));
+
+//          std::cerr << "Error: Do not recognize this test " << v.first << " (" << __FILE__ << "," << __LINE__ << ")" << std::endl;
+//          exit(EXIT_FAILURE);
+	}
       }
     }
   }

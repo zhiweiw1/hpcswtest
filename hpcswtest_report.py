@@ -212,6 +212,13 @@ check_file_patterns = {"compiler": {
                                  "files_exist": [],
                                  "check_file_sizes": []
                                 },
+                      "ncbi-sratoolkit": {
+                                 "file_patterns": {
+                                                   "pbs_stdout": ["284"]
+                                                  },
+                                 "files_exist": [],
+                                 "check_file_sizes": []
+                                },
                       "openblas": {
                                  "file_patterns": {
                                                    "pbs_stdout": ["test!"]

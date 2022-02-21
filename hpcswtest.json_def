@@ -133,6 +133,11 @@
 		                [
                                  {"module_name": "ncbi/blast", "module_version": "2.11.0","working_dir":"test-cases/blast","exe_name": "blastn", "exe_args": "-query sample3.fasta -subject sample1.fasta"}
 				],
+                   "sratoolkit":  
+		                [
+                                 {"module_name": "ncbi/sratoolkit", "module_version": "2.11.0","working_dir":"test-cases/sratoolkit","exe_name": "fastq-dump", "exe_args": "-X 1 -Z /apps/ncbi/sratoolkit/data/SRR000001/SRR000001.sra | sed -n '2p' | awk '{ print length }'"},
+                                 {"module_name": "ncbi/sratoolkit", "module_version": "2.11.3","working_dir":"test-cases/sratoolkit","exe_name": "fastq-dump", "exe_args": "-X 1 -Z /apps/ncbi/sratoolkit/data/SRR000001/SRR000001.sra | sed -n '2p' | awk '{ print length }'"}
+				],
                    "openblas":  
 		                [
                                  {"module_name": "openblas", "module_version": "0.3.17","working_dir":"test-cases/openblas","exe_name": "gcc -o test test.c -lopenblas; ./test 1000 1000 1000", "exe_args": ""}

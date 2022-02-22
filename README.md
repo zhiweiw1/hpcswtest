@@ -7,8 +7,7 @@ This UTSA revision was developed by the Research Computing Support group at the 
 
 Tests Supported
 ---------------
-Besides the ones included in the INL revision such as MPI libraries, Compilers, abaqus, matlab, ansys, lsdyna, lammps, nwchem, python2 and python3, the UTSA revison included anaconda, miniconda, java, R, singularity, autodock, bcl2fastq, bcl2fastq2, fds, fsl, geos, glpk, homer, columbus, cellranger, mathematica, meep, namd, blast, sratoolkit, opensees, orca, parallel, perl, salmon, samtools, sbt, scala3, spaceranger, subread, trimgalore, cmake, gdal, gmp, harminv,  
-hdf5, jpeglib, proj, sqlite, squashfs, tcl, tiff, valgrind, xalt, and yaml-cpp. All the new added applications are handled by the GenericTest class without re-compiling the code.
+Besides the ones included in the INL revision such as MPI libraries, Compilers, abaqus, matlab, ansys, lsdyna, lammps, nwchem, python2 and python3, the UTSA revison included anaconda, miniconda, java, R, singularity, autodock, bcl2fastq, bcl2fastq2, fds, fsl, geos, glpk, homer, columbus, cellranger, mathematica, meep, namd, blast, sratoolkit, opensees, orca, parallel, perl, salmon, samtools, sbt, scala3, spaceranger, subread, trimgalore, cmake, gdal, gmp, harminv, hdf5, jpeglib, proj, sqlite, squashfs, tcl, tiff, valgrind, xalt, and yaml-cpp. All the new added applications are handled by the GenericTest class without re-compiling the code.
 
 Building Dependencies
 ---------------------
@@ -31,6 +30,17 @@ HPCSWTEST_QUEUE - Define job scheduling queue to use.
 HPCSWTEST_BASE_DIR - Directory location of default json file defining the tests to run (hpcswtest.json_def) (If hpcswtest.json is
 contained in your current working directory then this environmental variable will be ignored and hpcswtest.json will be used to define what tests to run.)
 
+Configuration file
+-----------------------
+The configuration file is written in json format. It can be named as hpcswtest.json_def and saved in the location indicated by the environmental variable HPCSWTEST_BASE_DIR, or it can be named as hpcswtest.json and saved it in your current working directory. 
+For example, the entry for perl in the configuration file looks like following:
+"perl":
+                                [
+                                 {"module_name": "perl", "module_version": "5.26.3","working_dir":"test-cases/perl","exe_name": "perl test.pl", "exe_args": ""},
+                                 {"module_name": "perl", "module_version": "5.34.0","working_dir":"test-cases/perl","exe_name": "perl test.pl", "exe_args": ""}
+                                ],
+
+In this case, two versions of perl will be tested, version 5.26.3 and 5.34.0. The "working_dir" keyword will direct the testing command suggested by "exe_name" and "exe_args" to run in directory test-cases/perl. The sample per code needs to be put in test-cases/perl under the directory where HPCSWTEST_BASE_DIR points to.
 
 Testing Procedure
 ----------------

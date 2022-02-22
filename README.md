@@ -3,11 +3,12 @@
 The HPC Software stack testing framework (hpcswtest) is used in the INL Scientific Computing Department to test the basic sanity and integrity of the HPC Software stack (Compilers, MPI, Numerical libraries and Applications) and to quickly discover hard failures. As a by-product it will indirectly check the HPC infrastructure (network, PBS and licensing servers). Hpcswtest is primarily written in c++11, with some supporting scripts written in python2. A json file defines all the tests to be run (i.e typically each line contains the module name and version), Job scheduler scripts for the tests are generated and submitted to the scheduling system (PBS pro and SLURM are supported). When the tests have complete a python script (i.e hpcswtest_report.py) is provided to check the results and generate a report.
 An example json file is provided (hpcswtest.json_def).
 
+This UTSA revision was developed by the Research Computing Support group at the University of Texas at San Antonio for testing applications installed on the HPC cluster named Arc. This revision keeps the original testing cases for the applications installed on both the HPC cluster at INL Scientific Computing Department and the Arc HPC cluster at UTSA. It introduces the GenericTest class to handle all the applications other than the ones included in the original revision. With the GenericTest class, adding a new application does not require creating a corresponding C++ class and re-compiling the entire framework as in the INL revision.
 
 Tests Supported
 ---------------
-MPI libraries, Compilers, BLAS libraries, Boost, VASP, gaussian, abaqus, starccm+, matlab, ansys, lsdyna, cth, helios, mcnp, mcnpx, serpent, scale, mc21, lammps, nwchem, python2, python3
-
+Besides the ones included in the INL revision such as MPI libraries, Compilers, abaqus, matlab, ansys, lsdyna, lammps, nwchem, python2 and python3, the UTSA revison included anaconda, miniconda, java, R, singularity, autodock, bcl2fastq, bcl2fastq2, fds, fsl, geos, glpk, homer, columbus, cellranger, mathematica, meep, namd, blast, sratoolkit, opensees, orca, parallel, perl, salmon, samtools, sbt, scala3, spaceranger, subread, trimgalore, cmake, gdal, gmp, harminv,  
+hdf5, jpeglib, proj, sqlite, squashfs, tcl, tiff, valgrind, xalt, and yaml-cpp. All the new added applications are handled by the GenericTest class without re-compiling the code.
 
 Building Dependencies
 ---------------------

@@ -370,7 +370,7 @@ check_file_patterns = {"compiler": {
                                  "file_patterns": {
                                                    "pbs_stdout": ["hello world"]
                                                   },
-                                 "files_exist": ["test-cases/squashfs/test.sqsh"],
+                                 "files_exist": [],
                                  "check_file_sizes": []
                                 },
                       "tiff": {

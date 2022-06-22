@@ -20,7 +20,7 @@
                                  {"module_name": "openmpi", "module_version": "4.1.1-gcc-10.3.0", "c_name": "mpicc", "cpp_name": "mpicxx", "f_name": "mpif90", "c_flags": "-O2", "cpp_flags": "-O2", "f_flags": "-O2", "c_link_libs": "-lm", "cpp_link_libs": "-lm", "f_link_libs": "-lm", "mpi_cmd_name": "mpirun", "mpi_cmd_args": "none"},
                                  {"module_name": "openmpi", "module_version": "4.1.1-gcc-11.2.0", "c_name": "mpicc", "cpp_name": "mpicxx", "f_name": "mpif90", "c_flags": "-O2", "cpp_flags": "-O2", "f_flags": "-O2", "c_link_libs": "-lm", "cpp_link_libs": "-lm", "f_link_libs": "-lm", "mpi_cmd_name": "mpirun", "mpi_cmd_args": "none"},
                                  {"module_name": "intel/oneapi", "module_version": "2021.2.0", "c_name": "mpiicc", "cpp_name": "mpiicpc", "f_name": "mpiifort", "c_flags": "-O2", "cpp_flags": "-O2", "f_flags": "-O2", "c_link_libs": "-lm", "cpp_link_libs": "-lm", "f_link_libs": "-lm", "mpi_cmd_name": "mpirun", "mpi_cmd_args": "none"},
-                                 {"module_name": "mpich", "module_version": "4.0.a2", "c_name": "mpicc", "cpp_name": "mpicxx", "f_name": "mpif90", "c_flags": "-O2", "cpp_flags": "-O2", "f_flags": "-O2", "c_link_libs": "-lm", "cpp_link_libs": "-lm", "f_link_libs": "-lm", "mpi_cmd_name": "mpirun", "mpi_cmd_args": "none"}
+                                 {"module_name": "mpich", "module_version": "4.0.2", "c_name": "mpicc", "cpp_name": "mpicxx", "f_name": "mpif90", "c_flags": "-O2", "cpp_flags": "-O2", "f_flags": "-O2", "c_link_libs": "-lm", "cpp_link_libs": "-lm", "f_link_libs": "-lm", "mpi_cmd_name": "mpirun", "mpi_cmd_args": "none"}
                                 ],
                    "java":  
 		                [
@@ -126,7 +126,7 @@
 				],
                    "namd":  
 		                [
-                                 {"module_name": "namd", "module_version": "2.14-multicore","working_dir":"test-cases/namd","exe_name": "namd2", "exe_args": "+p80  apoa1.namd"},
+                                 {"module_name": "namd", "module_version": "2.14-multicore","working_dir":"test-cases/namd","exe_name": "namd2", "exe_args": "+p20  apoa1.namd"},
                                  {"module_name": "namd", "module_version": "2.14-mpi","working_dir":"test-cases/namd","mpi_cmd_name": "mpirun", "mpi_cmd_args": "-n $SLURM_NTASKS", "exe_name": "namd2", "exe_args": "apoa1.namd"}
 				],
                    "blast":  
